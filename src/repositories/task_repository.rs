@@ -166,9 +166,7 @@ impl TaskRepository for PgTaskRepository {
     }
 
     async fn delete_all(&self) -> Result<(), AppError> {
-        sqlx::query("DELETE FROM tasks")
-            .execute(&self.pool)
-            .await?;
+        sqlx::query("DELETE FROM tasks").execute(&self.pool).await?;
         Ok(())
     }
 }
