@@ -1,0 +1,38 @@
+[package]
+name = "task-api"
+version = "0.1.0"
+edition = "2021"
+description = "Task-management API with 2FA login, role-based access and Redis-cached task views"
+
+[lib]
+name = "task_api"
+path = "src/lib.rs"
+
+[[bin]]
+name = "task-api"
+path = "src/main.rs"
+
+[dependencies]
+actix-web = "4"
+tokio = { version = "1", features = ["full"] }
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono", "migrate"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+validator = { version = "0.16", features = ["derive"] }
+thiserror = "1"
+async-trait = "0.1"
+bcrypt = "0.15"
+jsonwebtoken = "9"
+redis = { version = "0.25", features = ["tokio-comp"] }
+deadpool-redis = { version = "0.15", features = ["rt_tokio_1"] }
+uuid = { version = "1", features = ["serde", "v4"] }
+chrono = { version = "0.4", features = ["serde"] }
+utoipa = { version = "4", features = ["actix_extras", "chrono", "uuid"] }
+utoipa-swagger-ui = { version = "6", features = ["actix-web"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+dotenv = "0.15"
+rand = "0.8"
+
+[dev-dependencies]
+reqwest = { version = "0.11", features = ["json"] }
