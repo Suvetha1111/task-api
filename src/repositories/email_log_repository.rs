@@ -8,6 +8,7 @@ use crate::models::{EmailLogRow, NewEmailLog};
 pub trait EmailLogRepository: Send + Sync + 'static {
     async fn insert(&self, log: &NewEmailLog) -> Result<(), AppError>;
     async fn latest(&self) -> Result<Option<EmailLogRow>, AppError>;
+    async fn delete_all(&self) -> Result<(), AppError>;
 }
 
 #[derive(Clone)]
@@ -47,5 +48,12 @@ impl EmailLogRepository for PgEmailLogRepository {
         .fetch_optional(&self.pool)
         .await?;
         Ok(row)
+    }
+
+    async fn delete_all(&self) -> Result<(), AppError> {
+        sqlx::query("DELETE FROM email_logs")
+            .execute(&self.pool)
+            .await?;
+        Ok(())
     }
 }

@@ -23,6 +23,7 @@ pub trait LoginChallengeRepository: Send + Sync + 'static {
         id: Uuid,
         used_at: DateTime<Utc>,
     ) -> Result<(), AppError>;
+    async fn delete_all(&self) -> Result<(), AppError>;
 }
 
 #[derive(Clone)]
@@ -79,6 +80,13 @@ impl LoginChallengeRepository for PgLoginChallengeRepository {
             .bind(id)
             .bind(used_at)
             .execute(&mut **tx)
+            .await?;
+        Ok(())
+    }
+
+    async fn delete_all(&self) -> Result<(), AppError> {
+        sqlx::query("DELETE FROM login_challenges")
+            .execute(&self.pool)
             .await?;
         Ok(())
     }

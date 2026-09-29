@@ -43,6 +43,11 @@ login_and_verify() {
   [[ -n "$TOKEN_OUT" ]] || fail "access_token missing: $BODY_OUT"
 }
 
+step "POST /dev/reset"
+request POST /dev/reset
+expect_code 200
+[[ "$(jq -r '.reset' <<<"$BODY_OUT")" == "true" ]] || fail "reset flag missing: $BODY_OUT"
+
 step "POST /seed/users"
 request POST /seed/users
 expect_code 200

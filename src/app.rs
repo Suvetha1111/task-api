@@ -32,7 +32,7 @@ pub async fn build_state(config: Config) -> Result<AppState, AppError> {
     ));
 
     Ok(AppState {
-        auth: AuthContainer::new(&pool, &config, tokens.clone())?,
+        auth: AuthContainer::new(&pool, &redis, &config, tokens.clone())?,
         tasks: TaskContainer::new(&pool, &redis),
         users: UserContainer::new(&pool),
         tokens,

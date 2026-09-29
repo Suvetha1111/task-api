@@ -101,3 +101,8 @@ impl From<EmailLogRow> for EmailLogResponse {
         }
     }
 }
+
+#[derive(Debug, Clone, Serialize, ToSchema)]
+pub struct ResetResponse {
+    pub reset: bool,
+}

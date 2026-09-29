@@ -41,6 +41,7 @@ pub trait TaskRepository: Send + Sync + 'static {
     ) -> Result<TaskRow, AppError>;
     /// Tasks assigned to a user, ordered by `created_at` then `id`.
     async fn list_assigned_to(&self, user_id: Uuid) -> Result<Vec<AssignedTaskRow>, AppError>;
+    async fn delete_all(&self) -> Result<(), AppError>;
 }
 
 #[derive(Clone)]
@@ -162,5 +163,12 @@ impl TaskRepository for PgTaskRepository {
         .fetch_all(&self.pool)
         .await?;
         Ok(rows)
+    }
+
+    async fn delete_all(&self) -> Result<(), AppError> {
+        sqlx::query("DELETE FROM tasks")
+            .execute(&self.pool)
+            .await?;
+        Ok(())
     }
 }

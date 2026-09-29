@@ -31,17 +31,24 @@ OpenAPI JSON: http://127.0.0.1:8080/api-docs/openapi.json
 ## Seed and validate
 
 The fastest way is the script, which performs the whole flow below and exits
-non-zero on any mismatch:
+non-zero on any mismatch. It starts with `POST /dev/reset` so a second run
+still sees exactly 3 tasks for James Bond:
 
 ```bash
 scripts/validate.sh
 ```
+
+Port 8080 must be this process. If `cargo run` prints `Address already in use`,
+stop the other listener first (`lsof -nP -iTCP:8080 -sTCP:LISTEN`).
 
 The same flow by hand:
 
 ```bash
 BASE=http://127.0.0.1:8080
 H='content-type: application/json'
+
+# 0. wipe tasks/challenges/email logs from a previous run (keeps users)
+curl -s -X POST $BASE/dev/reset
 
 # 1. seed (idempotent)
 curl -s -X POST $BASE/seed/users

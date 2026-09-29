@@ -19,6 +19,7 @@ pub trait CacheService: Send + Sync + 'static {
     async fn get(&self, key: &str) -> Result<Option<String>, AppError>;
     async fn set_ex(&self, key: &str, value: &str, ttl_secs: u64) -> Result<(), AppError>;
     async fn delete(&self, keys: &[String]) -> Result<(), AppError>;
+    async fn delete_by_pattern(&self, pattern: &str) -> Result<(), AppError>;
 }
 
 #[derive(Clone)]
@@ -52,6 +53,15 @@ impl CacheService for RedisCacheService {
         }
         let mut conn = self.pool.get().await?;
         conn.del::<_, ()>(keys).await?;
+        Ok(())
+    }
+
+    async fn delete_by_pattern(&self, pattern: &str) -> Result<(), AppError> {
+        let mut conn = self.pool.get().await?;
+        let keys: Vec<String> = conn.keys(pattern).await?;
+        if !keys.is_empty() {
+            conn.del::<_, ()>(keys).await?;
+        }
         Ok(())
     }
 }
